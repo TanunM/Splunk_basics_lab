@@ -65,14 +65,24 @@ http://<ubuntu IP>:8000
 ```bash
 index=ssh_lab sourcetype="json" auth_success=false | stats count by "id.orig_h" | sort -count
 ```
+
+<img src='https://github.com/TanunM/Splunk_basics_lab/blob/main/gallery/1.%20failed_login.png'/>
+
+<img src='https://github.com/TanunM/Splunk_basics_lab/blob/main/gallery/2.%20ssh_ip.png'/>
+
 3. Find the number of total SSH connections:
 ```bash
 index=ssh_lab sourcetype="json" | stats count as total_ssh_connections
 ```
+
+<img src='https://github.com/TanunM/Splunk_basics_lab/blob/main/gallery/3.%20num_ssh_conn.png'/>
+
 4. Count all event types:
 ```bash
 index=ssh_lab sourcetype="json" | stats count by event_type
 ```
+
+<img src='https://github.com/TanunM/Splunk_basics_lab/blob/main/gallery/4.%20event_type.png'/>
 
 ## Step 4: HTTP Log Analysis
 1. Upload the file in a similar manner to the SSH file upload.
@@ -80,18 +90,31 @@ index=ssh_lab sourcetype="json" | stats count by event_type
 ```bash
 index=http_lab sourcetype="json" | stats count by "id.orig_h" | sort -count
 ```
+
+<img src='https://github.com/TanunM/Splunk_basics_lab/blob/main/gallery/5.%20http_ip.png'/>
+
 3. Count the number of server errors between 500 and 600:
 ```bash
 index=http_lab sourcetype="json" status_code>=500 status_code<600 | stats count as server_errors
 ```
+
+<img src='https://github.com/TanunM/Splunk_basics_lab/blob/main/gallery/6.%20http_error.png'/>
+
+<img src='https://github.com/TanunM/Splunk_basics_lab/blob/main/gallery/7.%20http_error_num.png'/>
+
 4. Identify User-Agents associated with possible scripted attacks:
 ```bash
 index=http_lab sourcetyp="json" user_agent IN ("sqlmap/1.5.1", "curl/7.68.0", "python-requests/2.25.1", "botnet-checker/1.0") | stats count by user_agent
 ```
+
+<img src='http://github.com/TanunM/Splunk_basics_lab/blob/main/gallery/8.%20diff_access.png'/>
+
 5. Find large file transfers more than 500KB:
 ```bash
 index=http_lab sourcetype="json" resp_body_len>500000 | table ts "id.orig_h" "id.resp_h" uri resp_body_len | sort -resp_body_len
 ```
+
+<img src='https://github.com/TanunM/Splunk_basics_lab/blob/main/gallery/9.%20file_transfer.png'/>
 
 ## Step 5: Zeek Connection Log Analysis
 1. Similar to the SSH file, upload the Zeek file
@@ -99,19 +122,30 @@ index=http_lab sourcetype="json" resp_body_len>500000 | table ts "id.orig_h" "id
 ```bash
 index="zeek_conn_lab" sourcetype="json" | stats count by id.orig_h | sort -count
 ```
+
+<img src='https://github.com/TanunM/Splunk_basics_lab/blob/main/gallery/10.%20zeek_ip.png'/>
+
 3. List Most Common Services:
 ```bash
 index="zeek_conn_lab" sourcetype="json" | stats count by service | sort -count
 ```
+
+<img src='https://github.com/TanunM/Splunk_basics_lab/blob/main/gallery/11.%20conn_type.png'/>
+
 4. Find Connections with Duration > 1 Second:
 ```bash
 index="zeek_conn_lab" sourcetype="json" duration>1 | table ts id.orig_h id.resp_h service duration
 | sort -duration
 ```
+
+<img src='https://github.com/TanunM/Splunk_basics_lab/blob/main/gallery/12.%20based_on_duration.png'/>
+
 5. Identify the 10 Most Accessed Internal Servers:
 ```bash
 index="zeek_conn_lab" sourcetype="json" | stats count by "id.resp_h" | sort -count | head 10
 ```
+
+<img src='https://github.com/TanunM/Splunk_basics_lab/blob/main/gallery/13.%20most_accessed.png'/>
 
 ## Step 6: Investigating Unauthorized Access
 1. Similar to the SSH file, upload the unauthorized access file with Index Name: unauth_lab.
@@ -119,14 +153,22 @@ index="zeek_conn_lab" sourcetype="json" | stats count by "id.resp_h" | sort -cou
 ```bash
 index="unauth_lab" sourcetype="json" result="success" | stats count as total_success_events
 ```
+
+<img src='https://github.com/TanunM/Splunk_basics_lab/blob/main/gallery/14.%20success_event.png'/>
+
 3. Find most common event triggered and captured:
 ```bash
 index="unauth_lab" sourcetype="json" | stats count by event_type | sort -count
 ```
+
+<img src='https://github.com/TanunM/Splunk_basics_lab/blob/main/gallery/15.%20common_event.png'/>
+
 4. Find if a uid “1010” tried accessing a linux server. What is the logfile path accessed by him twice?
 ```bash
 index="unauth_lab" sourcetype="json" uid="1010" | stats count by path | where count=2
 ```
+
+<img src='https://github.com/TanunM/Splunk_basics_lab/blob/main/gallery/16.%20access_by_count.png'/>
 
 ## Key Learning
 * Data Ingestion and Indexing: Successfully set up a local Splunk environment and configured multiple new indexes to logically separate different types of security logs (SSH, HTTP, Zeek, Unauthorized Access).
